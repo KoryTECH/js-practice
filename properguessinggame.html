@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villainous Number Guesser</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #2c003e;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            background-image: radial-gradient(circle, #3a004f 0%, #1f0029 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid #ff00ff;
+        }
+        
+        h1 {
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .button {
+            background-color: #ff00ff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+        
+        .button:hover {
+            background-color: #ff33ff;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+        }
+        
+        .button-secondary {
+            background-color: #333;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        
+        .button-secondary:hover {
+            background-color: #555;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        
+        .input-field {
+            padding: 12px;
+            border-radius: 50px;
+            border: 2px solid #ff00ff;
+            background-color: #1a0025;
+            color: white;
+            font-size: 1rem;
+            width: 80px;
+            text-align: center;
+            margin: 10px;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        }
+        
+        .message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(255, 0, 255, 0.2);
+            border-left: 5px solid #ff00ff;
+        }
+        
+        .attempts {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin-top: 15px;
+        }
+        
+        .villain-speech {
+            font-style: italic;
+            color: #ff00ff;
+            margin: 15px 0;
+        }
+        
+        .skull {
+            font-size: 3rem;
+            margin: 10px;
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff00ff, 0 0 20px #ff00ff;
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00ff, 0 0 40px #ff00ff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="skull">☠</div>
+        <h1>Villainous Number Guesser</h1>
+        
+        <div id="intro">
+            <p>Welcome, foolish mortal! I have chosen a number between 1 and 10.</p>
+            <p class="villain-speech">Can you guess it, or will you be trapped here forever?</p>
+            <button class="button" onclick="startGame()">I Accept Your Challenge!</button>
+            <button class="button button-secondary" onclick="surrender()">I'm Too Scared!</button>
+        </div>
+        
+        <div id="game" style="display: none;">
+            <p>Muahaha! Try to guess my number!</p>
+            <input type="number" id="guessInput" class="input-field" min="1" max="10">
+            <button class="button" onclick="checkGuess()">Guess</button>
+            <div id="message" class="message">Enter your guess above...</div>
+            <div class="attempts">Attempts: <span id="attemptCount">0</span></div>
+            <button class="button button-secondary" onclick="giveUp()">I Give Up!</button>
+        </div>
+        
+        <div id="outro" style="display: none;">
+            <p id="outroMessage"></p>
+            <button class="button" onclick="resetGame()">Play Again</button>
+            <button class="button button-secondary" onclick="leaveGame()">No More!</button>
+        </div>
+    </div>
+
+    <script>
+        let secretNumber;
+        let attempts;
+        let gameActive;
+        
+        function startGame() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            document.getElementById('outro').style.display = 'none';
+            
+            secretNumber = Math.floor(Math.random() * 10) + 1;
+            attempts = 0;
+            gameActive = true;
+            
+            updateAttempts();
+            document.getElementById('message').textContent = "The game begins! Guess a number between 1 and 10.";
+        }
+        
+        function checkGuess() {
+            if (!gameActive) return;
+            
+            const guessInput = document.getElementById('guessInput');
+            const guess = parseInt(guessInput.value);
+            
+            if (isNaN(guess) || guess < 1 || guess > 10) {
+                document.getElementById('message').textContent = "Fool! I said a number between 1 and 10!";
+                return;
+            }
+            
+            attempts++;
+            updateAttempts();
+            
+            if (guess === secretNumber) {
+                document.getElementById('message').innerHTML = ` Curse you! You guessed it! My number was indeed ${secretNumber}.`;
+                endGame(true);
+            } else {
+                const difference = Math.abs(secretNumber - guess);
+                let taunt;
+                
+                if (difference >= 4) taunt = "Not even close, pathetic human!";
+                else if (difference >= 2) taunt = "Getting warmer, but still far!";
+                else taunt = "Ooh, so very close! But still wrong!";
+                
+                document.getElementById('message').textContent = `Wrong! ${taunt}`;
+            }
+            
+            guessInput.value = '';
+            guessInput.focus();
+        }
+        
+        function giveUp() {
+            endGame(false);
+        }
+        
+        function endGame(victory) {
+            gameActive = false;
+            document.getElementById('game').style.display = 'none';
+            document.getElementById('outro').style.display = 'block';
+            
+            if (victory) {
+                document.getElementById('outroMessage').textContent = 
+                    `You've defeated me this time! It took you ${attempts} attempts. But I'll be back!`;
+            } else {
+                document.getElementById('outroMessage').textContent = 
+                    `Ha! I knew you couldn't guess my number (it was ${secretNumber}). Run away, coward!`;
+            }
+        }
+        
+        function resetGame() {
+            startGame();
+        }
+        
+        function surrender() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('outro').style.display = 'block';
+            document.getElementById('outroMessage').textContent = 
+                "Wise choice to flee! My mathematical prowess is too great for mere mortals!";
+        }
+        
+        function leaveGame() {
+            document.getElementById('outro').style.display = 'none';
+            document.getElementById('intro').style.display = 'block';
+        }
+        
+        function updateAttempts() {
+            document.getElementById('attemptCount').textContent = attempts;
+        }
+        
+        // Handle Enter key in input field
+        document.getElementById('guessInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkGuess();
+            }
+        });
+    </script>
+</body>
+</html>
