@@ -6,34 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <p id="demo">Hello World!</p>
-    <button type="button" onclick="myFunc() ">Change value</button>
-    <div id="name" ></div>
+    <script src="filterarray.js"></script>
 </body>
-<style>
-    body {
-        background-color: skyblue;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
-    #name {
-        margin-top: 50px;
-        width: 200px;
-        height: 20px;
-        border-radius: 30px;
-        background: rgb(93, 169, 255);
-        color: black;
-        text-align: center;
-    }
-</style>
-<script>
-    var name = prompt("What is your name")
-    console.log = document.getElementById("name").innerHTML = name;
-
-    function myFunc() {
-        document.getElementById("demo").innerHTML = "Hello everyone!";
-    }
-</script>
 </html>
